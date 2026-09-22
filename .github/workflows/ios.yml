@@ -24,7 +24,6 @@ jobs:
         run: |
           git clone https://github.com/microsoft/vcpkg.git $GITHUB_WORKSPACE/vcpkg
           $GITHUB_WORKSPACE/vcpkg/bootstrap-vcpkg.sh
-          $GITHUB_WORKSPACE/vcpkg/vcpkg install glm sdl3
           echo "VCPKG_ROOT=$GITHUB_WORKSPACE/vcpkg" >> $GITHUB_ENV
 
       - name: Setup project and build
