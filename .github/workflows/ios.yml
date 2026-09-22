@@ -1,0 +1,22 @@
+  - name: Install dependencies
+    run: |
+      brew install cmake ninja meson pkgconf xcodegen
+
+  - name: Setup project and build
+    run: |
+      ./scripts/build/ios/fetch-moltenvk.sh
+      ./scripts/build/ios/stage-fonts.sh
+      cmake --preset ios-vulkan
+      cmake --build build/ios-vulkan --target z_GX_app
+
+  - name: Package app
+    run: |
+      mkdir -p Payload
+      cp -r build/ios-vulkan/GeneralsZH.app Payload/
+      zip -r GeneralsZH.ipa Payload
+
+  - name: Upload IPA Artifact
+    uses: actions/upload-artifact@v4
+    with:
+      name: GeneralsZH-iOS-IPA
+      path: GeneralsZH.ipa
