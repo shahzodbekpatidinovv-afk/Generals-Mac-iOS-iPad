@@ -1,62 +1,40 @@
+name: Build iOS IPA
 
-**	Command & Conquer Generals(tm)
-**	Copyright 2025 Electronic Arts Inc.
-**
-**	This program is free software: you can redistribute it and/or modify
-**	it under the terms of the GNU General Public License as published by
-**	the Free Software Foundation, either version 3 of the License, or
-**	(at your option) any later version.
-**
-**	This program is distributed in the hope that it will be useful,
-**	but WITHOUT ANY WARRANTY; without even the implied warranty of
-**	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-**	GNU General Public License for more details.
-**
-**	You should have received a copy of the GNU General Public License
-**	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
 
-////////////////////////////////////////////////////////////////////////////////
-//																																						//
-//  (c) 2001-2003 Electronic Arts Inc.																				//
-//																																						//
-////////////////////////////////////////////////////////////////////////////////
+jobs:
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
-/**
- * User class used by the network.
- */
+      - name: Install dependencies
+        run: |
+          brew install cmake ninja meson pkgconf xcodegen
 
-#pragma once
+      - name: Update submodules
+        run: |
+          git submodule update --init references/fbraz3-dxvk
 
-#ifndef __USER_H
-#define __USER_H
+      - name: Setup project and build
+        run: |
+          ./scripts/build/ios/fetch-moltenvk.sh
+          ./scripts/build/ios/stage-fonts.sh
+          cmake --preset ios-vulkan
+          cmake --build build/ios-vulkan --target z_generals
 
-#include "GameNetwork/networkdefs.h"
-#include "Common/UnicodeString.h"
+      - name: Package IPA
+        run: |
+          ./scripts/build/ios/package-ios-zh.sh
 
-class User : public MemoryPoolObject
-{
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(User, "User")		
-public:
-	User() {}
-	User(UnicodeString name, UnsignedInt addr, UnsignedInt port);
-	User &operator= (const User *other);
-	Bool operator== (const User *other);
-	Bool operator!= (const User *other);
-
-	inline UnicodeString GetName() { return m_name; }
-	void setName(UnicodeString name);
-	inline UnsignedShort GetPort() { return m_port; }
-	inline UnsignedInt GetIPAddr() { return m_ipaddr; }
-	inline void SetPort(UnsignedShort port) { m_port = port; }
-	inline void SetIPAddr(UnsignedInt ipaddr) { m_ipaddr = ipaddr; }
-
-
-private:
-	UnicodeString m_name;
-	UnsignedShort m_port;
-	UnsignedInt m_ipaddr;
-};
-EMPTY_DTOR(User)
-
-#endi
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GeneralsZH-iOS-IPA
+          path: build/ios-vulkan/*.ipa
