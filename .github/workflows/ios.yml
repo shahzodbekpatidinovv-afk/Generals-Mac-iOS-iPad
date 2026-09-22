@@ -21,16 +21,21 @@ jobs:
           echo "/opt/homebrew/bin" >> $GITHUB_PATH
           echo "CMAKE_MAKE_PROGRAM=$(which ninja)" >> $GITHUB_ENV
 
-      - name: Update submodules
+      - name: Fix Missing Toolchain and Submodules
         run: |
           git submodule update --init --recursive --force
+          mkdir -p scripts/buildsystems
+          if [ ! -f "scripts/buildsystems/vcpkg.cmake" ]; then
+            git clone https://github.com/microsoft/vcpkg.git external/vcpkg
+            cp external/vcpkg/scripts/buildsystems/vcpkg.cmake scripts/buildsystems/vcpkg.cmake
+          fi
 
       - name: Setup project and build
         run: |
           chmod +x ./scripts/build/ios/*.sh
           ./scripts/build/ios/fetch-moltenvk.sh
           ./scripts/build/ios/stage-fonts.sh
-          cmake --preset ios-vulkan
+          cmake --preset ios-vulkan -DCMAKE_MAKE_PROGRAM=$(which ninja)
           cmake --build --preset ios-vulkan --target z_generals
 
       - name: Package IPA
