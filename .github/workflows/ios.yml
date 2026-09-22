@@ -15,27 +15,26 @@ jobs:
           submodules: recursive
           fetch-depth: 0
 
-      - name: Install dependencies
+      - name: Install build tools
         run: |
           brew install cmake ninja meson pkgconf xcodegen
           echo "/opt/homebrew/bin" >> $GITHUB_PATH
 
-      - name: Setup vcpkg
+      - name: Setup vcpkg environment
         run: |
-          git clone https://github.com/microsoft/vcpkg.git $GITHUB_WORKSPACE/external/vcpkg
-          $GITHUB_WORKSPACE/external/vcpkg/bootstrap-vcpkg.sh
-          mkdir -p scripts/buildsystems
-          cp $GITHUB_WORKSPACE/external/vcpkg/scripts/buildsystems/vcpkg.cmake scripts/buildsystems/vcpkg.cmake
+          git clone https://github.com/microsoft/vcpkg.git $GITHUB_WORKSPACE/vcpkg
+          $GITHUB_WORKSPACE/vcpkg/bootstrap-vcpkg.sh
+          echo "VCPKG_ROOT=$GITHUB_WORKSPACE/vcpkg" >> $GITHUB_ENV
 
       - name: Setup project and build
         run: |
           chmod +x ./scripts/build/ios/*.sh
           ./scripts/build/ios/fetch-moltenvk.sh
           ./scripts/build/ios/stage-fonts.sh
-          cmake -B build/ios-vulkan -S . -G "Ninja" \
+          cmake -B build/ios-vulkan -S . \
+            -G "Ninja" \
             -DCMAKE_MAKE_PROGRAM=/opt/homebrew/bin/ninja \
-            -DVCPKG_ROOT=$GITHUB_WORKSPACE/external/vcpkg \
-            -DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/scripts/buildsystems/vcpkg.cmake
+            -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake
           cmake --build build/ios-vulkan --target z_generals
 
       - name: Package IPA
