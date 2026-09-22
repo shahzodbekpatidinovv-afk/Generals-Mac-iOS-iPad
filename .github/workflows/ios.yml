@@ -15,21 +15,22 @@ jobs:
           submodules: recursive
           fetch-depth: 0
 
-      - name: Update all submodules
+      - name: Checkout submodules explicitly
         run: |
-          git submodule update --init --recursive
+          git submodule update --init --recursive --force
 
       - name: Install dependencies
         run: |
           brew install cmake ninja meson pkgconf xcodegen
           echo "/opt/homebrew/bin" >> $GITHUB_PATH
+          echo "/usr/local/bin" >> $GITHUB_PATH
 
       - name: Setup project and build
         run: |
           chmod +x ./scripts/build/ios/*.sh
           ./scripts/build/ios/fetch-moltenvk.sh
           ./scripts/build/ios/stage-fonts.sh
-          cmake --preset ios-vulkan
+          cmake -G "Ninja" -B build/ios-vulkan -S . -DCMAKE_TOOLCHAIN_FILE=scripts/buildsystems/vcpkg.cmake
           cmake --build build/ios-vulkan --target z_generals
 
       - name: Package IPA
