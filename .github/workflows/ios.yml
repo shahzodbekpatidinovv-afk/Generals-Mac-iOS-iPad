@@ -20,18 +20,22 @@ jobs:
           brew install cmake ninja meson pkgconf xcodegen
           echo "/opt/homebrew/bin" >> $GITHUB_PATH
 
-      - name: Setup vcpkg toolchain
+      - name: Setup vcpkg
         run: |
-          git clone https://github.com/microsoft/vcpkg.git external/vcpkg
+          git clone https://github.com/microsoft/vcpkg.git $GITHUB_WORKSPACE/external/vcpkg
+          $GITHUB_WORKSPACE/external/vcpkg/bootstrap-vcpkg.sh
           mkdir -p scripts/buildsystems
-          cp external/vcpkg/scripts/buildsystems/vcpkg.cmake scripts/buildsystems/vcpkg.cmake
+          cp $GITHUB_WORKSPACE/external/vcpkg/scripts/buildsystems/vcpkg.cmake scripts/buildsystems/vcpkg.cmake
 
       - name: Setup project and build
         run: |
           chmod +x ./scripts/build/ios/*.sh
           ./scripts/build/ios/fetch-moltenvk.sh
           ./scripts/build/ios/stage-fonts.sh
-          cmake -B build/ios-vulkan -S . -G "Ninja" -DCMAKE_TOOLCHAIN_FILE="$GITHUB_WORKSPACE/scripts/buildsystems/vcpkg.cmake"
+          cmake -B build/ios-vulkan -S . -G "Ninja" \
+            -DCMAKE_MAKE_PROGRAM=/opt/homebrew/bin/ninja \
+            -DVCPKG_ROOT=$GITHUB_WORKSPACE/external/vcpkg \
+            -DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/scripts/buildsystems/vcpkg.cmake
           cmake --build build/ios-vulkan --target z_generals
 
       - name: Package IPA
