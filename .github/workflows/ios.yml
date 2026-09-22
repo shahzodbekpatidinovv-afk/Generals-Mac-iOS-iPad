@@ -7,16 +7,14 @@
       ./scripts/build/ios/fetch-moltenvk.sh
       ./scripts/build/ios/stage-fonts.sh
       cmake --preset ios-vulkan
-      cmake --build build/ios-vulkan --target z_GX_app
+      cmake --build build/ios-vulkan --target z_generals
 
-  - name: Package app
+  - name: Package IPA
     run: |
-      mkdir -p Payload
-      cp -r build/ios-vulkan/GeneralsZH.app Payload/
-      zip -r GeneralsZH.ipa Payload
+      ./scripts/build/ios/package-ios-zh.sh
 
   - name: Upload IPA Artifact
     uses: actions/upload-artifact@v4
     with:
       name: GeneralsZH-iOS-IPA
-      path: GeneralsZH.ipa
+      path: build/ios-vulkan/*.ipa
