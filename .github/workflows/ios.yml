@@ -34,14 +34,15 @@ jobs:
           ./scripts/build/ios/fetch-moltenvk.sh
           ./scripts/build/ios/stage-fonts.sh
 
+          # Vcpkg orqali glm ni oldindan o'rnatib olamiz
+          "$VCPKG_ROOT/vcpkg" install glm --triplet=arm64-ios || true
+
           cmake -B build/ios-vulkan -S . \
             -G Ninja \
             -DCMAKE_MAKE_PROGRAM=/opt/homebrew/bin/ninja \
             -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" \
             -DVCPKG_TARGET_TRIPLET=arm64-ios \
-            -DSAGE_USE_SDL3=ON \
-            -DSAGE_BUILD_D3DX8=OFF \
-            -DENABLE_D3DX8=OFF
+            -DSAGE_USE_SDL3=ON
 
           cmake --build build/ios-vulkan --target z_generals
 
