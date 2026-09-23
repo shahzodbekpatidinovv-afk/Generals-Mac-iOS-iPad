@@ -34,7 +34,7 @@ jobs:
           ./scripts/build/ios/fetch-moltenvk.sh
           ./scripts/build/ios/stage-fonts.sh
 
-          # windows_base.h va d3d8types.h fayllarini yaratib qo'shamiz
+          # Barcha kerakli Windows / DirectX sarlavha fayllarini to'liq yaratamiz
           mkdir -p Generals/Code/CompatLib/Include
           cat << 'EOF' > Generals/Code/CompatLib/Include/windows_base.h
           #pragma once
@@ -51,6 +51,7 @@ jobs:
           EOF
 
           touch Generals/Code/CompatLib/Include/d3d8types.h
+          touch Generals/Code/CompatLib/Include/d3d8.h
 
           echo "" > GeneralsMD/Code/CompatLib/dummy.cpp
           echo "cmake_minimum_required(VERSION 3.15)" > GeneralsMD/Code/CompatLib/CMakeLists.txt
