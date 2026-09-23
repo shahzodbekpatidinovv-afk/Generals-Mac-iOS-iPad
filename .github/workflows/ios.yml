@@ -34,7 +34,7 @@ jobs:
           ./scripts/build/ios/fetch-moltenvk.sh
           ./scripts/build/ios/stage-fonts.sh
 
-          # Windows va DirectX turlarini to'liq to'ldirib yozamiz
+          # Windows va DirectX turlari hamda FVF makroslarini to'liq to'ldiramiz
           mkdir -p Generals/Code/CompatLib/Include
           cat << 'EOF' > Generals/Code/CompatLib/Include/windows_base.h
           #pragma once
@@ -53,6 +53,16 @@ jobs:
           cat << 'EOF' > Generals/Code/CompatLib/Include/d3d8types.h
           #pragma once
           typedef int D3DFORMAT;
+
+          #define D3DFVF_XYZ 0x002
+          #define D3DFVF_NORMAL 0x010
+          #define D3DFVF_DIFFUSE 0x040
+          #define D3DFVF_SPECULAR 0x080
+          #define D3DFVF_TEX1 0x100
+          #define D3DFVF_TEX2 0x200
+          #define D3DFVF_TEX3 0x300
+          #define D3DFVF_TEX4 0x400
+
           typedef struct _D3DVECTOR {
               float x;
               float y;
