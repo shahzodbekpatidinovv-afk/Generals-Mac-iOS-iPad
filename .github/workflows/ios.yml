@@ -34,10 +34,11 @@ jobs:
           ./scripts/build/ios/fetch-moltenvk.sh
           ./scripts/build/ios/stage-fonts.sh
 
-          # Перезаписываем проблемный CompatLib/CMakeLists.txt рабочим минимальным содержимым
+          # Создаем локальный файл-заглушку для CompatLib
+          echo "" > GeneralsMD/Code/CompatLib/dummy.cpp
           echo "cmake_minimum_required(VERSION 3.15)" > GeneralsMD/Code/CompatLib/CMakeLists.txt
           echo "project(CompatLib)" >> GeneralsMD/Code/CompatLib/CMakeLists.txt
-          echo "add_library(CompatLib STATIC ../../Core/Dummy.cpp)" >> GeneralsMD/Code/CompatLib/CMakeLists.txt
+          echo "add_library(CompatLib STATIC dummy.cpp)" >> GeneralsMD/Code/CompatLib/CMakeLists.txt
 
           cmake -B build/ios-vulkan -S . \
             -G Ninja \
