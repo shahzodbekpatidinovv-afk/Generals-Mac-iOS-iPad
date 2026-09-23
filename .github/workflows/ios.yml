@@ -34,7 +34,7 @@ jobs:
           ./scripts/build/ios/fetch-moltenvk.sh
           ./scripts/build/ios/stage-fonts.sh
 
-          # Windows va DirectX uchun D3DVECTOR va boshqa tuzilmalarni to'ldiramiz
+          # Windows va DirectX turlarini to'liq to'ldirib yozamiz
           mkdir -p Generals/Code/CompatLib/Include
           cat << 'EOF' > Generals/Code/CompatLib/Include/windows_base.h
           #pragma once
@@ -52,6 +52,7 @@ jobs:
 
           cat << 'EOF' > Generals/Code/CompatLib/Include/d3d8types.h
           #pragma once
+          typedef int D3DFORMAT;
           typedef struct _D3DVECTOR {
               float x;
               float y;
@@ -69,9 +70,24 @@ jobs:
                   float m[4][4];
               };
           } D3DMATRIX;
+
+          typedef struct _D3DCAPS8 {
+              int Dummy;
+          } D3DCAPS8;
+
+          typedef struct _D3DADAPTER_IDENTIFIER8 {
+              int Dummy;
+          } D3DADAPTER_IDENTIFIER8;
           EOF
 
-          touch Generals/Code/CompatLib/Include/d3d8.h
+          cat << 'EOF' > Generals/Code/CompatLib/Include/d3d8.h
+          #pragma once
+          #include "d3d8types.h"
+          class IDirect3D8 {
+          public:
+              int Dummy;
+          };
+          EOF
 
           echo "" > GeneralsMD/Code/CompatLib/dummy.cpp
           echo "cmake_minimum_required(VERSION 3.15)" > GeneralsMD/Code/CompatLib/CMakeLists.txt
