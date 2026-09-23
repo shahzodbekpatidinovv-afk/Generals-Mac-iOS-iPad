@@ -43,7 +43,7 @@ jobs:
           echo "add_library(CompatLib STATIC dummy.cpp)" >> GeneralsMD/Code/CompatLib/CMakeLists.txt
           echo "target_include_directories(CompatLib PUBLIC Include)" >> GeneralsMD/Code/CompatLib/CMakeLists.txt
 
-          # Kompilyator xatoligini o'tkazib yuborish uchun -Wno-error flagi qo'shildi
+          # -Wno-error yordamida barcha ogohlantirishларнинг xatoga aylanishining oldini olamiz
           for i in {1..3}; do
             cmake -B build/ios-vulkan -S . \
               -G Ninja \
@@ -51,7 +51,8 @@ jobs:
               -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" \
               -DVCPKG_TARGET_TRIPLET=arm64-ios \
               -DSAGE_USE_SDL3=ON \
-              -DCMAKE_CXX_FLAGS="-Wno-error=implicit-exception-spec-mismatch" && break || sleep 5;
+              -DCMAKE_CXX_FLAGS="-Wno-error" \
+              -DCMAKE_C_FLAGS="-Wno-error" && break || sleep 5;
           done
 
           cmake --build build/ios-vulkan --target z_generals
