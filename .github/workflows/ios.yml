@@ -24,7 +24,8 @@ jobs:
       - name: Setup vcpkg environment
         run: |
           git clone https://github.com/microsoft/vcpkg.git "$GITHUB_WORKSPACE/vcpkg"
-          "$GITHUB_WORKSPACE/vcpkg/bootstrap-vcpkg.sh"
+          # Telemetriyani o'chirib, bootstrapni xatosiz ishga tushiramiz
+          "$GITHUB_WORKSPACE/vcpkg/bootstrap-vcpkg.sh" -disableMetrics
           echo "VCPKG_ROOT=$GITHUB_WORKSPACE/vcpkg" >> "$GITHUB_ENV"
 
       - name: Setup project and build
@@ -34,7 +35,6 @@ jobs:
           ./scripts/build/ios/fetch-moltenvk.sh
           ./scripts/build/ios/stage-fonts.sh
 
-          # windows_base.h ichiga to'liq RECT strukturasini yozamiz
           mkdir -p Generals/Code/CompatLib/Include
           cat << 'EOF' > Generals/Code/CompatLib/Include/windows_base.h
           #pragma once
