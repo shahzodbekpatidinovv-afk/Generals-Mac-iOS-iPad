@@ -34,10 +34,10 @@ jobs:
           ./scripts/build/ios/fetch-moltenvk.sh
           ./scripts/build/ios/stage-fonts.sh
 
-          # Удаляем проблемную линковку d3dx8 в CompatLib, так как на iOS она не нужна
-          if [ -f "GeneralsMD/Code/CompatLib/CMakeLists.txt" ]; then
-            sed -i '' '/d3dx8/d' GeneralsMD/Code/CompatLib/CMakeLists.txt
-          fi
+          # Перезаписываем проблемный CompatLib/CMakeLists.txt рабочим минимальным содержимым
+          echo "cmake_minimum_required(VERSION 3.15)" > GeneralsMD/Code/CompatLib/CMakeLists.txt
+          echo "project(CompatLib)" >> GeneralsMD/Code/CompatLib/CMakeLists.txt
+          echo "add_library(CompatLib STATIC ../../Core/Dummy.cpp)" >> GeneralsMD/Code/CompatLib/CMakeLists.txt
 
           cmake -B build/ios-vulkan -S . \
             -G Ninja \
