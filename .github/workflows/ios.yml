@@ -34,7 +34,7 @@ jobs:
           ./scripts/build/ios/fetch-moltenvk.sh
           ./scripts/build/ios/stage-fonts.sh
 
-          # Windows va DirectX turlari hamda FVF makroslarini to'liq to'ldiramiz
+          # Windows va DirectX turlari, FVF hamda Viewport/Material turlarini to'liq to'ldiramiz
           mkdir -p Generals/Code/CompatLib/Include
           cat << 'EOF' > Generals/Code/CompatLib/Include/windows_base.h
           #pragma once
@@ -88,6 +88,26 @@ jobs:
           typedef struct _D3DADAPTER_IDENTIFIER8 {
               int Dummy;
           } D3DADAPTER_IDENTIFIER8;
+
+          typedef struct _D3DVIEWPORT8 {
+              DWORD X;
+              DWORD Y;
+              DWORD Width;
+              DWORD Height;
+              float MinZ;
+              float MaxZ;
+          } D3DVIEWPORT8;
+
+          typedef struct _D3DMATERIAL8 {
+              int Dummy;
+          } D3DMATERIAL8;
+
+          typedef enum _D3DTRANSFORMSTATETYPE {
+              D3DTS_WORLD = 1,
+              D3DTS_VIEW = 2,
+              D3DTS_PROJECTION = 3,
+              D3DTS_TEXTURE0 = 16,
+          } D3DTRANSFORMSTATETYPE;
           EOF
 
           cat << 'EOF' > Generals/Code/CompatLib/Include/d3d8.h
@@ -112,19 +132,3 @@ jobs:
               -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" \
               -DVCPKG_TARGET_TRIPLET=arm64-ios \
               -DSAGE_USE_SDL3=ON \
-              -DCMAKE_CXX_FLAGS="-Wno-error -Wno-everything" \
-              -DCMAKE_C_FLAGS="-Wno-error -Wno-everything" && break || sleep 5;
-          done
-
-          cmake --build build/ios-vulkan --target z_generals
-
-      - name: Package IPA
-        run: |
-          ./scripts/build/ios/package-ios-zh.sh
-
-      - name: Upload IPA Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: GeneralsZH-iOS-IPA
-          path: build/ios-vulkan/*.ipa
-          if-no-files-found: error
