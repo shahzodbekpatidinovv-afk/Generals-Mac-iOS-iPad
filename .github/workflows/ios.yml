@@ -34,101 +34,36 @@ jobs:
           ./scripts/build/ios/fetch-moltenvk.sh
           ./scripts/build/ios/stage-fonts.sh
 
-          # Windows va DirectX turlari, FVF hamda Viewport/Material turlarini to'liq to'ldiramiz
           mkdir -p Generals/Code/CompatLib/Include
-          cat << 'EOF' > Generals/Code/CompatLib/Include/windows_base.h
-          #pragma once
-          typedef int LONG;
-          typedef unsigned int DWORD;
-          typedef int BOOL;
-          typedef int INT;
-          struct RECT {
-              LONG left;
-              LONG top;
-              LONG right;
-              LONG bottom;
-          };
-          EOF
 
-          cat << 'EOF' > Generals/Code/CompatLib/Include/d3d8types.h
-          #pragma once
-          typedef int D3DFORMAT;
+          printf '#pragma once\n' > Generals/Code/CompatLib/Include/windows_base.h
+          printf 'typedef int LONG;\n' >> Generals/Code/CompatLib/Include/windows_base.h
+          printf 'typedef unsigned int DWORD;\n' >> Generals/Code/CompatLib/Include/windows_base.h
+          printf 'typedef int BOOL;\n' >> Generals/Code/CompatLib/Include/windows_base.h
+          printf 'typedef int INT;\n' >> Generals/Code/CompatLib/Include/windows_base.h
+          printf 'struct RECT { LONG left; LONG top; LONG right; LONG bottom; };\n' >> Generals/Code/CompatLib/Include/windows_base.h
 
-          #define D3DFVF_XYZ 0x002
-          #define D3DFVF_NORMAL 0x010
-          #define D3DFVF_DIFFUSE 0x040
-          #define D3DFVF_SPECULAR 0x080
-          #define D3DFVF_TEX1 0x100
-          #define D3DFVF_TEX2 0x200
-          #define D3DFVF_TEX3 0x300
-          #define D3DFVF_TEX4 0x400
+          printf '#pragma once\n' > Generals/Code/CompatLib/Include/d3d8types.h
+          printf 'typedef int D3DFORMAT;\n' >> Generals/Code/CompatLib/Include/d3d8types.h
+          printf '#define D3DFVF_XYZ 0x002\n' >> Generals/Code/CompatLib/Include/d3d8types.h
+          printf '#define D3DFVF_NORMAL 0x010\n' >> Generals/Code/CompatLib/Include/d3d8types.h
+          printf '#define D3DFVF_DIFFUSE 0x040\n' >> Generals/Code/CompatLib/Include/d3d8types.h
+          printf '#define D3DFVF_SPECULAR 0x080\n' >> Generals/Code/CompatLib/Include/d3d8types.h
+          printf '#define D3DFVF_TEX1 0x100\n' >> Generals/Code/CompatLib/Include/d3d8types.h
+          printf '#define D3DFVF_TEX2 0x200\n' >> Generals/Code/CompatLib/Include/d3d8types.h
+          printf '#define D3DFVF_TEX3 0x300\n' >> Generals/Code/CompatLib/Include/d3d8types.h
+          printf '#define D3DFVF_TEX4 0x400\n' >> Generals/Code/CompatLib/Include/d3d8types.h
+          printf 'typedef struct _D3DVECTOR { float x; float y; float z; } D3DVECTOR;\n' >> Generals/Code/CompatLib/Include/d3d8types.h
+          printf 'typedef struct _D3DMATRIX { union { struct { float _11, _12, _13, _14; float _21, _22, _23, _24; float _31, _32, _33, _34; float _41, _42, _43, _44; }; float m[4][4]; }; } D3DMATRIX;\n' >> Generals/Code/CompatLib/Include/d3d8types.h
+          printf 'typedef struct _D3DCAPS8 { int Dummy; } D3DCAPS8;\n' >> Generals/Code/CompatLib/Include/d3d8types.h
+          printf 'typedef struct _D3DADAPTER_IDENTIFIER8 { int Dummy; } D3DADAPTER_IDENTIFIER8;\n' >> Generals/Code/CompatLib/Include/d3d8types.h
+          printf 'typedef struct _D3DVIEWPORT8 { DWORD X; DWORD Y; DWORD Width; DWORD Height; float MinZ; float MaxZ; } D3DVIEWPORT8;\n' >> Generals/Code/CompatLib/Include/d3d8types.h
+          printf 'typedef struct _D3DMATERIAL8 { int Dummy; } D3DMATERIAL8;\n' >> Generals/Code/CompatLib/Include/d3d8types.h
+          printf 'typedef enum _D3DTRANSFORMSTATETYPE { D3DTS_WORLD = 1, D3DTS_VIEW = 2, D3DTS_PROJECTION = 3, D3DTS_TEXTURE0 = 16 } D3DTRANSFORMSTATETYPE;\n' >> Generals/Code/CompatLib/Include/d3d8types.h
 
-          typedef struct _D3DVECTOR {
-              float x;
-              float y;
-              float z;
-          } D3DVECTOR;
-
-          typedef struct _D3DMATRIX {
-              union {
-                  struct {
-                      float _11, _12, _13, _14;
-                      float _21, _22, _23, _24;
-                      float _31, _32, _33, _34;
-                      float _41, _42, _43, _44;
-                  };
-                  float m[4][4];
-              };
-          } D3DMATRIX;
-
-          typedef struct _D3DCAPS8 {
-              int Dummy;
-          } D3DCAPS8;
-
-          typedef struct _D3DADAPTER_IDENTIFIER8 {
-              int Dummy;
-          } D3DADAPTER_IDENTIFIER8;
-
-          typedef struct _D3DVIEWPORT8 {
-              DWORD X;
-              DWORD Y;
-              DWORD Width;
-              DWORD Height;
-              float MinZ;
-              float MaxZ;
-          } D3DVIEWPORT8;
-
-          typedef struct _D3DMATERIAL8 {
-              int Dummy;
-          } D3DMATERIAL8;
-
-          typedef enum _D3DTRANSFORMSTATETYPE {
-              D3DTS_WORLD = 1,
-              D3DTS_VIEW = 2,
-              D3DTS_PROJECTION = 3,
-              D3DTS_TEXTURE0 = 16,
-          } D3DTRANSFORMSTATETYPE;
-          EOF
-
-          cat << 'EOF' > Generals/Code/CompatLib/Include/d3d8.h
-          #pragma once
-          #include "d3d8types.h"
-          class IDirect3D8 {
-          public:
-              int Dummy;
-          };
-          EOF
+          printf '#pragma once\n' > Generals/Code/CompatLib/Include/d3d8.h
+          printf '#include "d3d8types.h"\n' >> Generals/Code/CompatLib/Include/d3d8.h
+          printf 'class IDirect3D8 { public: int Dummy; };\n' >> Generals/Code/CompatLib/Include/d3d8.h
 
           echo "" > GeneralsMD/Code/CompatLib/dummy.cpp
           echo "cmake_minimum_required(VERSION 3.15)" > GeneralsMD/Code/CompatLib/CMakeLists.txt
-          echo "project(CompatLib)" >> GeneralsMD/Code/CompatLib/CMakeLists.txt
-          echo "add_library(CompatLib STATIC dummy.cpp)" >> GeneralsMD/Code/CompatLib/CMakeLists.txt
-          echo "target_include_directories(CompatLib PUBLIC Include)" >> GeneralsMD/Code/CompatLib/CMakeLists.txt
-
-          for i in {1..3}; do
-            cmake -B build/ios-vulkan -S . \
-              -G Ninja \
-              -DCMAKE_MAKE_PROGRAM=/opt/homebrew/bin/ninja \
-              -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" \
-              -DVCPKG_TARGET_TRIPLET=arm64-ios \
-              -DSAGE_USE_SDL3=ON \
